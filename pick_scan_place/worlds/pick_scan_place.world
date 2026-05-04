@@ -1,0 +1,143 @@
+<?xml version="1.0" ?>
+<!--
+  pick_scan_place.world
+  =====================
+  Gazebo simulation environment for the UR5 pick-scan-place pipeline.
+
+  Scene layout:
+  - UR5 arm spawned at origin (0,0,0)
+  - Pick object with QR code texture placed in front of arm at (0.35, 0, 0.05)
+  - 3 bins arranged in a line at x=0.65:
+      BIN_A (red)   - FOOD        - y=+0.45 (arm pan=+1.2 rad)
+      BIN_B (green) - HOME        - y= 0.00 (arm pan= 0.0 rad)
+      BIN_C (blue)  - ELECTRONICS - y=-0.45 (arm pan=-1.2 rad)
+  - Static camera at (-0.704, -0.614, 0.434) pointing toward arm SCAN pose
+  - gazebo_ros_state plugin exposes /gazebo/set_entity_state service
+-->
+<sdf version="1.6">
+  <world name="pick_scan_place_world">
+
+    <!-- Expose /gazebo/set_entity_state and /gazebo/get_entity_state -->
+    <plugin name="gazebo_ros_state" filename="libgazebo_ros_state.so">
+      <ros><namespace>/gazebo</namespace></ros>
+      <update_rate>10.0</update_rate>
+    </plugin>
+
+    <include><uri>model://sun</uri></include>
+    <include><uri>model://ground_plane</uri></include>
+
+    <!-- ═══════════════════ BINS ═══════════════════ -->
+
+    <!-- BIN A - FOOD - red -->
+    <model name="bin_a">
+      <static>true</static>
+      <pose>0.65 0.45 0.15 0 0 0</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry><box><size>0.25 0.25 0.3</size></box></geometry>
+          <material><ambient>1 0 0 1</ambient></material>
+        </visual>
+        <collision name="collision">
+          <geometry><box><size>0.25 0.25 0.3</size></box></geometry>
+        </collision>
+      </link>
+    </model>
+
+    <!-- BIN B - HOME - green -->
+    <model name="bin_b">
+      <static>true</static>
+      <pose>0.65 0.0 0.15 0 0 0</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry><box><size>0.25 0.25 0.3</size></box></geometry>
+          <material><ambient>0 0.8 0 1</ambient></material>
+        </visual>
+        <collision name="collision">
+          <geometry><box><size>0.25 0.25 0.3</size></box></geometry>
+        </collision>
+      </link>
+    </model>
+
+    <!-- BIN C - ELECTRONICS - blue -->
+    <model name="bin_c">
+      <static>true</static>
+      <pose>0.65 -0.45 0.15 0 0 0</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry><box><size>0.25 0.25 0.3</size></box></geometry>
+          <material><ambient>0 0 1 1</ambient></material>
+        </visual>
+        <collision name="collision">
+          <geometry><box><size>0.25 0.25 0.3</size></box></geometry>
+        </collision>
+      </link>
+    </model>
+
+    <!-- ═══════════════════ PICK OBJECT ═══════════════════ -->
+    <!--
+      Plain orange box at pick position.
+      The QR scanning is triggered manually via /barcode topic
+      since Gazebo Classic does not support dynamic texture changes.
+      For a full demo with automatic scanning, replace this with
+      include uri model://pick_object_food after copying models to
+      ~/.gazebo/models/
+    -->
+    <model name="pick_object">
+      <pose>-0.15 0.45 0.05 0 0 0</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry><box><size>0.06 0.06 0.06</size></box></geometry>
+          <material><ambient>1 0.5 0 1</ambient></material>
+        </visual>
+        <collision name="collision">
+          <geometry><box><size>0.06 0.06 0.06</size></box></geometry>
+        </collision>
+        <inertial>
+          <mass>0.1</mass>
+          <inertia>
+            <ixx>0.0001</ixx><ixy>0</ixy><ixz>0</ixz>
+            <iyy>0.0001</iyy><iyz>0</iyz><izz>0.0001</izz>
+          </inertia>
+        </inertial>
+      </link>
+    </model>
+
+    <!-- ═══════════════════ SCAN CAMERA ═══════════════════ -->
+    <!--
+      Static camera positioned 0.5m from the arm's SCAN pose.
+      The arm's tool0 at SCAN pose is at (-0.704, -0.114, 0.434).
+      Camera is placed at (-0.704, -0.614, 0.434) pointing +Y direction.
+      barcode_reader subscribes to /scan_camera/scan_camera/image_raw.
+    -->
+    <model name="scan_camera">
+      <static>true</static>
+      <pose>1.2 0.0 0.5 0 0 3.14159</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry><box><size>0.05 0.05 0.05</size></box></geometry>
+          <material><ambient>0.2 0.2 0.2 1</ambient></material>
+        </visual>
+        <sensor name="camera" type="camera">
+          <camera>
+            <horizontal_fov>1.047</horizontal_fov>
+            <image>
+              <width>640</width>
+              <height>480</height>
+              <format>R8G8B8</format>
+            </image>
+            <clip><near>0.05</near><far>5.0</far></clip>
+          </camera>
+          <always_on>true</always_on>
+          <update_rate>10</update_rate>
+          <visualize>true</visualize>
+          <plugin name="camera_plugin" filename="libgazebo_ros_camera.so">
+            <ros><namespace>/scan_camera</namespace></ros>
+            <camera_name>scan_camera</camera_name>
+            <frame_name>scan_camera_link</frame_name>
+          </plugin>
+        </sensor>
+      </link>
+    </model>
+
+  </world>
+</sdf>

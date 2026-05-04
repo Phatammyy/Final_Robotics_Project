@@ -1,0 +1,55 @@
+named_poses:
+
+  home:
+    joints:
+      shoulder_pan_joint: 0.0
+      shoulder_lift_joint: -1.5708
+      elbow_joint: 0.0
+      wrist_1_joint: -1.5708
+      wrist_2_joint: 0.0
+      wrist_3_joint: 0.0
+
+  pick:
+    joints:
+      shoulder_pan_joint: 1.0
+      shoulder_lift_joint: -1.3
+      elbow_joint: 1.5
+      wrist_1_joint: -1.8
+      wrist_2_joint: -1.5708
+      wrist_3_joint: 0.0
+
+  scan:
+    joints:
+      shoulder_pan_joint: 0.0
+      shoulder_lift_joint: -1.0
+      elbow_joint: 0.8
+      wrist_1_joint: -1.3
+      wrist_2_joint: -1.5708
+      wrist_3_joint: 0.0
+
+  bin_a:
+    joints:
+      shoulder_pan_joint: -1.2
+      shoulder_lift_joint: -1.2
+      elbow_joint: 1.2
+      wrist_1_joint: -1.5708
+      wrist_2_joint: -1.5708
+      wrist_3_joint: 0.0
+
+  bin_b:
+    joints:
+      shoulder_pan_joint: 0.0
+      shoulder_lift_joint: -1.2
+      elbow_joint: 1.2
+      wrist_1_joint: -1.5708
+      wrist_2_joint: -1.5708
+      wrist_3_joint: 0.0
+
+  bin_c:
+    joints:
+      shoulder_pan_joint: 1.2
+      shoulder_lift_joint: -1.2
+      elbow_joint: 1.2
+      wrist_1_joint: -1.5708
+      wrist_2_joint: -1.5708
+      wrist_3_joint: 0.0
